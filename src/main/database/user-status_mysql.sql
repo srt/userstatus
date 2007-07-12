@@ -16,7 +16,7 @@ CREATE TABLE userStatusHistory (
     lastIpAddress   CHAR(15)            NOT NULL,
     lastLoginDate   CHAR(15)            NOT NULL,
     lastLogoffDate  CHAR(15)            NOT NULL,
-    PRIMARY KEY pk_userStatus (historyID)
+    PRIMARY KEY pk_userStatusHistory (historyID)
 );
 
 INSERT INTO jiveVersion (name, version) VALUES ('user-status', 0);

@@ -6,9 +6,11 @@ import org.jivesoftware.openfire.SessionManager;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
+import org.jivesoftware.openfire.event.SessionEventDispatcher;
 import org.jivesoftware.openfire.event.SessionEventListener;
 import org.jivesoftware.openfire.session.ClientSession;
 import org.jivesoftware.openfire.session.Session;
+import org.jivesoftware.openfire.user.PresenceEventDispatcher;
 import org.jivesoftware.openfire.user.PresenceEventListener;
 import org.jivesoftware.util.Log;
 import org.jivesoftware.util.StringUtils;
@@ -73,11 +75,15 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
         {
             sessionCreated(session);
         }
+
+        SessionEventDispatcher.addListener(this);
+        PresenceEventDispatcher.addListener(this);
     }
 
     public void destroyPlugin()
     {
-        // nothing to do
+        PresenceEventDispatcher.removeListener(this);
+        SessionEventDispatcher.removeListener(this);
     }
 
     public void sessionCreated(Session session)
@@ -225,7 +231,7 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
         {
             return;
         }
-        
+
         if (Presence.Type.unavailable.equals(presence.getType()))
         {
             presenceText = presence.getType().toString();
@@ -233,6 +239,10 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
         else if (presence.getShow() != null)
         {
             presenceText = presence.getShow().toString();
+        }
+        else if (presence.isAvailable())
+        {
+            presenceText = "available";
         }
         else
         {
