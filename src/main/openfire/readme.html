@@ -178,9 +178,26 @@ hr {
             ${pom.description}
         </p>
 
+        <p>
+            This plugin automatically saves the last status
+            (presence, IP address, logon and logoff time) per user and resource to <tt>userStatus</tt>
+            table in the Openfire database.
+        </p>
+
+        <p>
+            Optionally you can archive user status entries (IP address, logon and logoff time)
+            for a specified time. History entries are stored in the <tt>userStatusHistory</tt> table.
+            The settings for history archiving can be configured on the "User Status Settings" page
+            that you'll find on the "Server" tab of the Openfire Admin Console.
+        </p>
+
         <h2>Database Schema</h2>
 
-        <pre>
+        <p>
+            The <tt>userStatus</tt> table contains the last status per user and resource:
+        </p>
+
+<pre>
 CREATE TABLE userStatus (
     username        VARCHAR(64)         NOT NULL,
     resource        VARCHAR(64)         NOT NULL,
@@ -191,7 +208,13 @@ CREATE TABLE userStatus (
     lastLogoffDate  CHAR(15),
     PRIMARY KEY pk_userStatus (username, resource)
 );
+</pre>
 
+        <p>
+            The <tt>userStatusHistory</tt> table contains the archived status entries if enabled:
+        </p>
+
+<pre>
 CREATE TABLE userStatusHistory (
     historyID       BIGINT              NOT NULL,
     username        VARCHAR(64)         NOT NULL,
@@ -201,7 +224,7 @@ CREATE TABLE userStatusHistory (
     lastLogoffDate  CHAR(15)            NOT NULL,
     PRIMARY KEY pk_userStatusHistory (historyID)
 );
-        </pre>
+</pre>
 
     </div>
 
