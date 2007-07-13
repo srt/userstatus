@@ -17,10 +17,12 @@
     
     <!-- Admin console meta-data -->
     <adminconsole>              
-<!--
         <tab id="tab-server">
-
+            <sidebar id="sidebar-server-settings">
+               <item id="user-status-settings" name="${user-status.settings.title}"
+                   url="user-status-settings.jsp"
+                   description="${user-status.settings.description}" />
+            </sidebar>
         </tab>
--->
     </adminconsole>
 </plugin>

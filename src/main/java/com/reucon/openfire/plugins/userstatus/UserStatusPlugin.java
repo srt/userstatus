@@ -54,8 +54,8 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
     private static final String DELETE_OLD_USER_STATUS_HISTORY =
             "DELETE from userStatusHistory WHERE lastLogoffDate < ?";
 
-    private static final String HISTORY_DAYS_PROPERTY = "user-status.historyDays";
-    private static final int DEFAULT_HISTORY_DAYS = -1;
+    public static final String HISTORY_DAYS_PROPERTY = "user-status.historyDays";
+    public static final int DEFAULT_HISTORY_DAYS = -1;
 
     /**
      * Number of days to keep history entries.<p>
