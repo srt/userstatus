@@ -12,8 +12,7 @@ import org.jivesoftware.openfire.session.ClientSession;
 import org.jivesoftware.openfire.session.Session;
 import org.jivesoftware.openfire.user.PresenceEventDispatcher;
 import org.jivesoftware.openfire.user.PresenceEventListener;
-import org.jivesoftware.util.Log;
-import org.jivesoftware.util.StringUtils;
+import org.jivesoftware.util.*;
 import org.xmpp.packet.Presence;
 
 import java.io.File;
@@ -22,11 +21,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * UserStatus plugin for Openfire.
  */
-public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceEventListener
+public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionEventListener, PresenceEventListener
 {
     private static final int SEQ_ID = 510;
 
@@ -51,10 +51,25 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
             "INSERT INTO userStatusHistory (historyID, username, resource, lastIpAddress," +
                     "lastLoginDate, lastLogoffDate) VALUES (?, ?, ?, ?, ?, ?)";
 
+    private static final String DELETE_OLD_USER_STATUS_HISTORY =
+            "DELETE from userStatusHistory WHERE lastLogoffDate < ?";
+
+    private static final String HISTORY_DAYS_PROPERTY = "user-status.historyDays";
+    private static final int DEFAULT_HISTORY_DAYS = -1;
+
+    /**
+     * Number of days to keep history entries.<p>
+     * 0 for now history entries, -1 for unlimited.
+     */
+    private int historyDays = DEFAULT_HISTORY_DAYS;
+
     public void initializePlugin(PluginManager manager, File pluginDirectory)
     {
         Connection con = null;
         PreparedStatement pstmt = null;
+
+        historyDays = JiveGlobals.getIntProperty(HISTORY_DAYS_PROPERTY, DEFAULT_HISTORY_DAYS);
+        PropertyEventDispatcher.addListener(this);
 
         try
         {
@@ -169,25 +184,53 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
             DbConnectionManager.closeConnection(pstmt, con);
         }
 
-        try
+        // write history entry
+        if (historyDays != 0)
         {
-            con = DbConnectionManager.getConnection();
-            pstmt = con.prepareStatement(ADD_USER_STATUS_HISTORY);
-            pstmt.setLong(1, SequenceManager.nextID(SEQ_ID));
-            pstmt.setString(2, session.getAddress().getNode());
-            pstmt.setString(3, session.getAddress().getResource());
-            pstmt.setString(4, getHostAddress(session));
-            pstmt.setString(5, StringUtils.dateToMillis(session.getCreationDate()));
-            pstmt.setString(6, StringUtils.dateToMillis(logoffDate));
-            pstmt.executeUpdate();
+            try
+            {
+                con = DbConnectionManager.getConnection();
+                pstmt = con.prepareStatement(ADD_USER_STATUS_HISTORY);
+                pstmt.setLong(1, SequenceManager.nextID(SEQ_ID));
+                pstmt.setString(2, session.getAddress().getNode());
+                pstmt.setString(3, session.getAddress().getResource());
+                pstmt.setString(4, getHostAddress(session));
+                pstmt.setString(5, StringUtils.dateToMillis(session.getCreationDate()));
+                pstmt.setString(6, StringUtils.dateToMillis(logoffDate));
+                pstmt.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                Log.error("Unable to add user status history for " + session.getAddress(), e);
+            }
+            finally
+            {
+                DbConnectionManager.closeConnection(pstmt, con);
+            }
         }
-        catch (SQLException e)
+
+        // delete old history entries
+        if (historyDays > 0)
         {
-            Log.error("Unable to add user status history for " + session.getAddress(), e);
-        }
-        finally
-        {
-            DbConnectionManager.closeConnection(pstmt, con);
+            Date deleteBefore;
+
+            deleteBefore = new Date(System.currentTimeMillis() - historyDays * 24L * 60L * 60L * 1000L);
+
+            try
+            {
+                con = DbConnectionManager.getConnection();
+                pstmt = con.prepareStatement(DELETE_OLD_USER_STATUS_HISTORY);
+                pstmt.setString(1, StringUtils.dateToMillis(deleteBefore));
+                pstmt.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                Log.error("Unable to delete old user status history", e);
+            }
+            finally
+            {
+                DbConnectionManager.closeConnection(pstmt, con);
+            }
         }
     }
 
@@ -219,6 +262,43 @@ public class UserStatusPlugin implements Plugin, SessionEventListener, PresenceE
     public void presenceChanged(ClientSession session, Presence presence)
     {
         updatePresence(session, presence);
+    }
+
+    public void propertySet(String property, Map<String, Object> params)
+    {
+        if (HISTORY_DAYS_PROPERTY.equals(property))
+        {
+            Object value = params.get("value");
+            if (value != null)
+            {
+                try
+                {
+                    historyDays = Integer.valueOf(value.toString());
+                }
+                catch (NumberFormatException e)
+                {
+                    historyDays = DEFAULT_HISTORY_DAYS;
+                }
+            }
+        }
+    }
+
+    public void propertyDeleted(String property, Map<String, Object> params)
+    {
+        if (HISTORY_DAYS_PROPERTY.equals(property))
+        {
+            historyDays = DEFAULT_HISTORY_DAYS;
+        }
+    }
+
+    public void xmlPropertySet(String property, Map<String, Object> params)
+    {
+        // we don't use xml properties
+    }
+
+    public void xmlPropertyDeleted(String property, Map<String, Object> params)
+    {
+        // we don't use xml properties
     }
 
     private void updatePresence(ClientSession session, Presence presence)
