@@ -158,7 +158,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
     {
         Connection con = null;
         PreparedStatement pstmt = null;
-        Date logoffDate;
+        final Date logoffDate;
 
         if (!XMPPServer.getInstance().getUserManager().isRegisteredUser(session.getAddress()))
         {
@@ -209,29 +209,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
             }
         }
 
-        // delete old history entries
-        if (historyDays > 0)
-        {
-            Date deleteBefore;
-
-            deleteBefore = new Date(System.currentTimeMillis() - historyDays * 24L * 60L * 60L * 1000L);
-
-            try
-            {
-                con = DbConnectionManager.getConnection();
-                pstmt = con.prepareStatement(DELETE_OLD_USER_STATUS_HISTORY);
-                pstmt.setString(1, StringUtils.dateToMillis(deleteBefore));
-                pstmt.executeUpdate();
-            }
-            catch (SQLException e)
-            {
-                Log.error("Unable to delete old user status history", e);
-            }
-            finally
-            {
-                DbConnectionManager.closeConnection(pstmt, con);
-            }
-        }
+        deleteOldHistoryEntries();
     }
 
     public void anonymousSessionCreated(Session session)
@@ -268,7 +246,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
     {
         if (HISTORY_DAYS_PROPERTY.equals(property))
         {
-            Object value = params.get("value");
+            final Object value = params.get("value");
             if (value != null)
             {
                 try
@@ -279,6 +257,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
                 {
                     historyDays = DEFAULT_HISTORY_DAYS;
                 }
+                deleteOldHistoryEntries();
             }
         }
     }
@@ -288,6 +267,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
         if (HISTORY_DAYS_PROPERTY.equals(property))
         {
             historyDays = DEFAULT_HISTORY_DAYS;
+            deleteOldHistoryEntries();
         }
     }
 
@@ -305,7 +285,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
     {
         Connection con = null;
         PreparedStatement pstmt = null;
-        String presenceText;
+        final String presenceText;
 
         if (!XMPPServer.getInstance().getUserManager().isRegisteredUser(session.getAddress()))
         {
@@ -345,6 +325,35 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
         finally
         {
             DbConnectionManager.closeConnection(pstmt, con);
+        }
+    }
+
+    private void deleteOldHistoryEntries()
+    {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        if (historyDays > 0)
+        {
+            final Date deleteBefore;
+
+            deleteBefore = new Date(System.currentTimeMillis() - historyDays * 24L * 60L * 60L * 1000L);
+
+            try
+            {
+                con = DbConnectionManager.getConnection();
+                pstmt = con.prepareStatement(DELETE_OLD_USER_STATUS_HISTORY);
+                pstmt.setString(1, StringUtils.dateToMillis(deleteBefore));
+                pstmt.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                Log.error("Unable to delete old user status history", e);
+            }
+            finally
+            {
+                DbConnectionManager.closeConnection(pstmt, con);
+            }
         }
     }
 
