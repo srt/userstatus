@@ -14,6 +14,7 @@ import org.jivesoftware.openfire.user.PresenceEventDispatcher;
 import org.jivesoftware.openfire.user.PresenceEventListener;
 import org.jivesoftware.util.*;
 import org.xmpp.packet.Presence;
+import org.xmpp.packet.JID;
 
 import java.io.File;
 import java.net.UnknownHostException;
@@ -242,6 +243,16 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
         updatePresence(session, presence);
     }
 
+    public void subscribedToPresence(JID subscriberJID, JID authorizerJID)
+    {
+        // we are not interested in subscription updates
+    }
+
+    public void unsubscribedToPresence(JID unsubscriberJID, JID recipientJID)
+    {
+        // we are not interested in subscription updates
+    }
+
     public void propertySet(String property, Map<String, Object> params)
     {
         if (HISTORY_DAYS_PROPERTY.equals(property))
@@ -361,7 +372,7 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
     {
         try
         {
-            return session.getConnection().getInetAddress().getHostAddress();
+            return session.getHostAddress();
         }
         catch (UnknownHostException e)
         {
