@@ -12,6 +12,9 @@
     <name>User Status Plugin</name>
     <url>http://maven.reucon.com/projects/public/archive</url>
     <description>Openfire plugin to save the user status to the database.</description>
+    <organization>
+        <name>Stefan Reuter</name>
+    </organization>
     <properties>
         <currentVersion>${pom.version}</currentVersion>
     </properties>
