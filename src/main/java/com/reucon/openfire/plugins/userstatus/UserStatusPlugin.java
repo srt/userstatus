@@ -223,6 +223,11 @@ public class UserStatusPlugin implements Plugin, PropertyEventListener, SessionE
         // we are not interested in anonymous sessions
     }
 
+    public void resourceBound(Session session)
+    {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void availableSession(ClientSession session, Presence presence)
     {
         updatePresence(session, presence);

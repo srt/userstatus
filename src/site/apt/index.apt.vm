@@ -26,7 +26,7 @@ User Status Plugin
 
 * Limitations
 
- Currently this plugin works with MySQL and PostgreSQL.
+ Currently this plugin works with MySQL, PostgreSQL and DB2.
 
 * Database Schema
 
