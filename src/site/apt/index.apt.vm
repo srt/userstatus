@@ -59,6 +59,17 @@ CREATE TABLE userStatusHistory (
 );
 +--
 
+ For the phpBB3 integration:
+
++--
+ALTER TABLE users ADD COLUMN jabber_presence CHAR(15);
+ALTER TABLE users ADD COLUMN jabber_online TINYINT;
+ALTER TABLE users ADD INDEX idx_users_2 (jabber_online);
++--
+
+ The phpBB3 integration will be activated by using the PhpBB3AuthProvider and will use the same JDBC connection
+ parameters.
+
 * Download
 
  You can download the plugin from

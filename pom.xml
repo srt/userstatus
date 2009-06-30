@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.reucon</groupId>
         <artifactId>reucon-public-parent</artifactId>
-        <version>3</version>
+        <version>5</version>
     </parent>
     <groupId>com.reucon.openfire.plugins</groupId>
     <artifactId>user-status</artifactId>
     <packaging>openfire-plugin</packaging>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>User Status Plugin</name>
     <url>http://maven.reucon.com/projects/public/user-status</url>
     <description>Openfire plugin to save the user status to the database.</description>
@@ -49,18 +50,12 @@
         <dependency>
             <groupId>org.igniterealtime.openfire</groupId>
             <artifactId>openfire</artifactId>
-            <version>3.6.0</version>
+            <version>3.6.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://secure.reucon.net/svn/repos/openfire/plugins/user-status/tags</tagBase>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>com.reucon.maven.plugins</groupId>
                 <artifactId>maven-openfire-plugin</artifactId>
