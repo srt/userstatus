@@ -20,16 +20,16 @@ import java.net.UnknownHostException;
 public class PhpBB3PersistenceManager implements PersistenceManager
 {
     private static final String UPDATE_USER_STATUS =
-            "UPDATE users SET jabber_online = 1 WHERE user_jid = ?";
+            "UPDATE users SET user_jabber_online = 1 WHERE user_jid = ?";
 
     private static final String SET_PRESENCE =
-            "UPDATE users SET jabber_presence = ? WHERE user_jid = ?";
+            "UPDATE users SET user_jabber_presence = ? WHERE user_jid = ?";
 
     private static final String SET_OFFLINE =
-            "UPDATE users SET jabber_online = 0 WHERE user_jid = ?";
+            "UPDATE users SET user_jabber_online = 0 WHERE user_jid = ?";
 
     private static final String SET_ALL_OFFLINE =
-            "UPDATE users SET jabber_online = 0 WHERE jabber_online = 1";
+            "UPDATE users SET user_jabber_online = 0 WHERE user_jabber_online = 1";
 
     private String connectionString = null;
 
