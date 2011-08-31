@@ -17,7 +17,8 @@
         <name>Stefan Reuter</name>
     </organization>
     <properties>
-        <currentVersion>${pom.version}</currentVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <currentVersion>${project.version}</currentVersion>
     </properties>
     <licenses>
         <license>
@@ -27,8 +28,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/user-status/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/user-status/trunk</developerConnection>
+        <connection>scm:git:git://github.com/srt/userstatus.git</connection>
+        <developerConnection>scm:git:git://github.com/srt/userstatus.git</developerConnection>
     </scm>
     <issueManagement>
         <system>JIRA</system>
@@ -68,4 +69,3 @@
         <finalName>user-status</finalName>
     </build>
 </project>
-    
