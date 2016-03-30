@@ -38,7 +38,9 @@ public class DefaultPersistenceManager implements PersistenceManager
 
     private static final String ADD_USER_STATUS_HISTORY =
             "INSERT INTO userStatusHistory (historyID, username, resource, lastIpAddress," +
-                    "lastLoginDate, lastLogoffDate) VALUES (?, ?, ?, ?, ?, ?)";
+                    "lastLoginDate, lastLogoffDate) " +
+            "SELECT ?, username, resource, lastipaddress, lastlogindate, lastlogoffdate " +
+            "from userStatus WHERE username = ? and resource = ?";
 
     private static final String DELETE_OLD_USER_STATUS_HISTORY =
             "DELETE from userStatusHistory WHERE lastLogoffDate < ?";
@@ -158,9 +160,6 @@ public class DefaultPersistenceManager implements PersistenceManager
                 pstmt.setLong(1, SequenceManager.nextID(SEQ_ID));
                 pstmt.setString(2, session.getAddress().getNode());
                 pstmt.setString(3, session.getAddress().getResource());
-                pstmt.setString(4, getHostAddress(session));
-                pstmt.setString(5, StringUtils.dateToMillis(session.getCreationDate()));
-                pstmt.setString(6, StringUtils.dateToMillis(logoffDate));
                 pstmt.executeUpdate();
             }
             catch (SQLException e)
