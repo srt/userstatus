@@ -32,49 +32,6 @@
     <system>JIRA</system>
     <url>http://jira.reucon.org/browse/USP</url>
   </issueManagement>
-
-
-  <repositories>
-    <repository>
-      <id>third-party-releases</id>
-      <name>Repository for Mavenized third-party Plugins</name>
-      <url>${nexus.baseURL}/third-party-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <layout>default</layout>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>third-party-releases</id>
-      <name>Repository for Mavenized third-party Plugins</name>
-      <url>${nexus.baseURL}/third-party-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <layout>default</layout>
-    </pluginRepository>
-    <pluginRepository>
-      <id>third-party-snapshots</id>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <name>Repository for snapshot third party plugins</name>
-      <url>${nexus.baseURL}/third-party-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-
   <build>
     <pluginManagement>
       <plugins>
@@ -155,9 +112,6 @@
     <plugins>
     </plugins>
   </build>
-
-
-
 
   <dependencyManagement>
     <dependencies>
