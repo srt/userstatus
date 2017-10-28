@@ -19,4 +19,4 @@ CREATE TABLE userStatusHistory (
     constraint pk_userStatusHistory PRIMARY KEY (historyID)
 );
 
-INSERT INTO jiveVersion (name, version) VALUES ('user-status', 0);
+INSERT INTO ofVersion (name, version) VALUES ('user-status', 0);
